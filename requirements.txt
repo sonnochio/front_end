@@ -6,6 +6,4 @@ requests
 pandas
 numpy
 Pillow
-time
-openai
 plotly.express
