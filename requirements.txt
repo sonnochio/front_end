@@ -5,7 +5,7 @@ streamlit_option_menu
 requests
 pandas
 numpy
-PIL
+Pillow
 time
 openai
 plotly.express
