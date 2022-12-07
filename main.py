@@ -79,10 +79,10 @@ elif tabs == 'Predict':
     col1,col2, col3 = st.columns(3, gap="small")
     with col1:
         st.markdown('## Insert your 1st title')
-        title1 = st.text_input('Insert your 1st title')
+        title1 = st.text_input('   ')
     with col2:
         st.markdown('## Insert your 2nd title')
-        title2 = st.text_input('Insert your 2nd title')
+        title2 = st.text_input('         ')
     with col3:
         st.markdown("## No idea? Get a title")
         openai.api_key = st.secrets['openai_key']
