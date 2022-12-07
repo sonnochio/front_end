@@ -7,3 +7,4 @@ pandas
 numpy
 Pillow
 plotly.express
+st_on_hover_tabs
