@@ -1,5 +1,5 @@
---upgrade pip
 streamlit==1.11.0
+--upgrade pip
 streamlit_lottie
 openai
 streamlit_option_menu
