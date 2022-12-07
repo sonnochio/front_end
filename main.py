@@ -2,19 +2,11 @@ import json
 import requests
 import streamlit as st
 from streamlit_lottie import st_lottie
-from streamlit.components.v1 import html
-import streamlit as st
-import requests
-import pandas as pd
-import numpy as np
 import streamlit as st
 from PIL import Image
-import requests
-import json
 import time
 import openai
 from st_on_hover_tabs import on_hover_tabs
-from streamlit_lottie import st_lottie
 import streamlit as st
 import plotly.express as px
 import numpy as np
