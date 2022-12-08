@@ -8,3 +8,5 @@ numpy
 Pillow
 plotly.express
 streamlit-on-Hover-tabs
+pyplutchik
+matplotlib

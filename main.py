@@ -12,6 +12,11 @@ import numpy as np
 import pandas as pd
 from streamlit_option_menu import option_menu
 from css import get_css
+from streamlit_option_menu import option_menu
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+from pyplutchik import plutchik
+import matplotlib.pyplot as plt
 
 
 st.set_page_config(layout="wide")
@@ -30,87 +35,6 @@ if tabs =='Main':
         return r.json()
 
     url='https://assets9.lottiefiles.com/packages/lf20_qe6rfoqh.json'
-
-
-    utube_logo=load_lottieurl(url)
-
-
-    st_lottie(utube_logo,
-            speed=0.3,
-            key='title',
-            height=300,
-            width=200)
-    st.write("# Youtube Optimizer")
-
-    st.write('Use the model to advise content creators on YouTube which thumbnails and titles they should use to maximise click-through rate.  ')
-
-
-elif tabs == 'Predict':
-
-
-    st.write("# Find the thumbnail and title to get the most views")
-
-    st.write('Use this feature to find the best combination of thumbnails and titles for your next youtube video! Simply upload 3 thumbnails and think of possible titles for your video (our title generator will help you in case you can not think of a third title)')
-
-    st.markdown('---')
-
-
-    # Set page tab display
-    # st.set_page_config(
-    # page_title="Youtube optimizer",
-    # page_icon= '🖼️',
-    # layout="wide",
-    # initial_sidebar_state="expanded",
-    # )
-
-    # st.header('Titles and Thumbnails Optimizer📸')
-    # st.markdown("### Let us find the best combination of Titles and Thumbnails for your Video👇")
-
-    #with st.form("my_form"):
-    # st.write('#')
-    img_file_buffer = st.file_uploader('Upload the differnt thumbnails to choose from', accept_multiple_files=True)
-
-
-    col1,col2, col3 = st.columns(3, gap="small")
-    with col1:
-        st.markdown('## Insert your 1st title')
-        title1 = st.text_input('Insert your 1st title')
-    with col2:
-        st.markdown('## Insert your 2nd title')
-        title2 = st.text_input('Insert your 2nd title')
-    with col3:
-        st.markdown("## No idea? Get a title")
-        openai.api_key = st.secrets['openai_key']
-        #"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"
-        # input3 = "coffee, le wagon, jobs"
-        title3=st.text_input("example: coffee, le wagon, jobs")
-
-        def generate_title_gtp3(text='kim kardashian'):
-            response = openai.Completion.create(
-            model="text-davinci-003",
-            prompt=f"write a YouTube title about {text}",
-            temperature=0.7,
-            max_tokens=256,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0
-            )
-            return ((response["choices"])[0]["text"])
-        if 'title3' not in st.session_state.keys():
-            st.session_state["title3"] = title3
-        get_title = st.button('Get Title')
-        if get_title:
-            st.session_state["title3"] = generate_title_gtp3(title3)[1:-1]
-            # st.write(title3)
-            # st.session_state["title3"] = title3
-            # if "title3" not in st.session_state.keys():
-                # st.session_state["title3"] = title3
-            # else:
-                # title3 = "coffee"
-                # st.session_state["title3"] = title3
-        st.write((st.session_state["title3"]))
-
-
     # html = """
     # <style>
     #     /* Disable overlay (fullscreen mode) buttons */
@@ -119,10 +43,11 @@ elif tabs == 'Predict':
     #     }
 
     #     /* 2nd thumbnail */
-    #     .element-container:nth-child(4) {
-    #     top: 300px;
-    #     left: 120px;
+    #     .css-1v0mbdj.etr89bj1 {
+    #     top: 3000px;
+    #     left: 4000px;
     #     }
+
 
 
     #     }
@@ -130,23 +55,169 @@ elif tabs == 'Predict':
     # """
     # st.markdown(html, unsafe_allow_html=True)
 
-    # st.image("youtube-1495277_1280.png", width=320)
-    submitted = st.button('Submit')
 
-    # st.button("button", key=1)
 
-    # button_markdown = f"""
-    # <style>
-    # .row-widget.stButton{{ border: none;
-    #                                     box-shadow:none;
-    #                                     width: 50px;
-    #                                     height: 20px;
-    #                                     background-size: cover;
 
-    #                                     }}
-    # <style>
-    # """
-    # st.markdown(button_markdown, unsafe_allow_html=True)
+    col1, col2 = st.columns([0.7,2])
+    with col1:
+        utube_logo=load_lottieurl(url)
+        st_lottie(utube_logo,
+                speed=0.3,
+                key='title',
+                height=500,
+                width=300)
+
+        lottie_markdown = f"""
+                <style>
+                .svg {{ border: none;
+                                                    box-shadow:none;
+                                                    width: 200px;
+                                                    height: 30px;
+                                                    border: none;
+                                                    top: 100px;
+                                                    left: -100px;
+                                                    }}
+                <style>
+                """
+        st.markdown(lottie_markdown, unsafe_allow_html=True)
+
+    with col2:
+        st.image('fron_logo.png')
+        logo_markdown = f"""
+                <style>
+                .css-1v0mbdj.etr89bj1 {{ border: none;
+                                                    box-shadow:none;
+                                                    width: 800px;
+                                                    height: 400px;
+                                                    border: none;
+                                                    top: 100px;
+                                                    left: 0px;
+                                                    }}
+                <style>
+                """
+        st.markdown(logo_markdown, unsafe_allow_html=True)
+
+
+    # st.write("# Youtube Optimizer")
+
+    # st.write('Use the model to advise content creators on YouTube which thumbnails and titles they should use to maximise click-through rate.  ')
+
+
+elif tabs == 'Predict':
+
+
+    st.write("# Find the thumbnail and title to get the most views")
+
+    st.write('Use this feature to find the best combination of thumbnails and titles for your next youtube video! Simply upload 3 thumbnails and think of possible titles for your video (the title generator will help you in case you can not think of a third title).')
+
+    # st.write('---')
+
+    st.write('    ')
+
+
+
+
+    img_file_buffer = st.file_uploader('Upload the differnt thumbnails to choose from:', accept_multiple_files=True)
+    # st.write(len(img_file_buffer))
+
+    if len(img_file_buffer) == 3:
+        col1,col2, col3 = st.columns(3, gap="small")
+        with col1:
+            st.image(Image.open(img_file_buffer[0]),width = 400)
+
+        with col2:
+            st.image(Image.open(img_file_buffer[1]),width = 400)
+
+        with col3:
+            st.image(Image.open(img_file_buffer[2]),width = 400)
+
+    st.write("     ")
+    st.write("     ")
+    st.write("     ")
+    st.write("     ")
+    st.write("     ")
+    st.write("     ")
+
+    col1,col2, col3 = st.columns(3, gap="small")
+    with col1:
+        st.markdown('## Insert your 1st title')
+        title1 = st.text_input(' ')
+    with col2:
+        st.markdown('## Insert your 2nd title')
+        title2 = st.text_input('   ')
+    with col3:
+        with st.form("my_form"):
+            # st.write("Inside the form")
+            # slider_val = st.slider("Form slider")
+            # checkbox_val = st.checkbox("Form checkbox")
+
+            # # Every form must have a submit button.
+            # submitted = st.form_submit_button("Submit")
+            # if submitted:
+            #     st.write("slider", slider_val, "checkbox", checkbox_val)
+
+            st.markdown("## No idea? Get a title")
+            openai.api_key = st.secrets['openai_key']
+
+            title3=st.text_input("Use GPT-3 to generate a title:")
+
+            def generate_title_gtp3(text='kim kardashian'):
+                response = openai.Completion.create(
+                model="text-davinci-003",
+                prompt=f"write a YouTube title about {text}",
+                temperature=0.7,
+                max_tokens=256,
+                top_p=1,
+                frequency_penalty=0,
+                presence_penalty=0
+                )
+                return ((response["choices"])[0]["text"])
+
+            if 'title3' not in st.session_state.keys():
+                st.session_state["title3"] = title3
+            get_title = st.form_submit_button('Get Title')
+            if get_title:
+                st.session_state["title3"] = generate_title_gtp3(title3)[1:-1]
+            st.write((st.session_state["title3"]))
+
+
+
+    html = """
+    <style>
+        /* Disable overlay (fullscreen mode) buttons */
+        .overlayBtn {
+        display: none;
+        }
+
+        /* 2nd thumbnail */
+        .css-1v0mbdj.etr89bj1 img{
+            float: left;
+            margin: 10px 15px -90px 15px;
+        }
+
+
+
+        }
+    </style>
+    """
+    st.markdown(html, unsafe_allow_html=True)
+
+    st.image("youtube-1495277_1280.png", width=100)
+    submitted = st.button('',key=3)
+
+
+    button_markdown = f"""
+    <style>
+    .css-1cpxqw2.edgvbvh9:nth-child(1) {{ border: none;
+                                        box-shadow:none;
+                                        width: 120px;
+                                        height: 70px;
+                                        background-color: rgba(0,0,0,0);;
+                                        border: none;
+                                        }}
+    <style>
+    """
+    st.markdown(button_markdown, unsafe_allow_html=True)
 
     titles = [title1,title2,st.session_state["title3"]]
 
@@ -198,6 +269,11 @@ elif tabs == 'Predict':
                     st.empty()
                 with col2:
                     st.image(Image.open(img_file_buffer[df_A.iloc[image]['image_id']]),width = 400)
+                    st.write('    ')
+                    st.write('    ')
+                    st.write('    ')
+                    st.write('    ')
+                    st.write('    ')
                     st.subheader(df_A.iloc[image]['title'])
                 with col3:
                     worst_vc = int(df_A.iloc[-1]['prediction'][0])
@@ -257,83 +333,133 @@ elif tabs == 'Predict':
 
 
 elif tabs == 'Analysis':
-    st.markdown(get_css(), unsafe_allow_html=True)
-    # insights_df = pd.read_csv('/Users/billy/code/youtube_optimizer/Insights_page/Data/final_processed_df.csv')
-    # data1=pd.read_csv('/Users/billy/code/youtube_optimizer/Insights_page/Data/barchart_df.csv')
+    emotions = {'joy': 0.5,
+            'trust': 0.2,
+            'fear': 0.1,
+            'surprise': 0.7,
+            'sadness': 0.4,
+            'disgust': 0.1,
+            'anger': 0.2,
+            'anticipation': 0.1}
+
+    emotions2 = {'joy': 0.7,
+                'trust': 0.3,
+                'fear': 0.4,
+                'surprise': 0.7,
+                'sadness': 0.2,
+                'disgust': 0.1,
+                'anger': 0.4,
+                'anticipation': 0.3}
 
 
-    # 1. horizontal menu
-    selected2 = option_menu(None, ["Hacks", "Emotions", "Word Cloud", "Faces"],
-        icons=['gear', 'cloud-upload', "list-task", 'gear'],
-        menu_icon="cast", default_index=0, orientation="horizontal")
+
+    def make_pie(df):
+
+        data = [(df['anger'] != 0).sum(), (df['anticip'] != 0).sum(),
+            (df['trust'] != 0).sum(), (df['surprise'] != 0).sum(),
+            (df['sadness'] != 0).sum(), (df['disgust'] != 0).sum(),
+            (df['joy'] != 0).sum()]
+
+        keys = ['Anger', 'Anticipation', 'Trust', 'Surprise', 'Sadness', 'Disgust', 'Joy']
+
+        fig = px.pie(df, values=data, names=keys, title='Sentiment Pie Chart')
+
+        return fig
+
+    def make_vader_pie(df):
+
+        data = [(df['neg'] != 0).sum(), (df['neu'] != 0).sum(),
+                (df['pos'] != 0).sum()]
+
+        keys = ['neg', 'neu', 'pos']
+
+        fig = px.pie(df, values=data, names=keys, title='Sentiment Pie Chart', hole=.3)
+
+        return fig
 
 
-    # 2. sectional content
-    if selected2 == "Hacks":
 
-        col1, col2= st.columns([5,5], gap="small")
-        with col1:
-            A = pd.DataFrame([['With','Capitals',0,0],
-                        ['With','Capitals',3794,1],
-                        ['Without','Capitals',0,0],
-                        ['Without','Capitals',633,1],
-                        ['With','Emojis',0,0],
-                        ['With','Emojis',1402,1],
-                        ['Without','Emojis',0,0],
-                        ['Without','Emojis',633,1],
-                        ['With','Numbers',0,0],
-                        ['With','Numbers',1955,1],
-                        ['Without','Numbers',0,0],
-                        ['Without','Numbers',425,1]],columns = ['with','trick','views','play'])
 
-            trick_options = ['Capitals', 'Emojis', 'Numbers']
-            dummy_options = A['play'].unique().tolist()
+    # visualization_df = pd.read_csv('/Users/billy/code/youtube_optimizer/Insights_page/visualization_csv.csv')
 
-            trick_bar = st.selectbox(
-                    ' ', options=['Capitals', 'Emojis', 'Numbers'])
+    # top10 = pd.read_csv('/Users/billy/code/youtube_optimizer/Insights_page/top10.csv')
 
-            B = A[A['trick'].isin([trick_bar])]
+    # bottom10 = pd.read_csv('/Users/billy/code/youtube_optimizer/Insights_page/bottom10.csv')
 
-            fig1 = px.bar(B, x='with', y='views', color='with', range_y=[0,4000], animation_frame="play",animation_group="with")
-            fig1.update_xaxes(visible=False, showticklabels=False)
-            fig1.update_layout(title=trick_bar, legend_title="")
-            st.write(px.bar(B, x='with', y='views', color='with', range_y=[0,4000]))
+    # vader_top10 = pd.read_csv('/Users/billy/code/youtube_optimizer/Insights_page/vader_top10.csv')
 
-            # st.write(fig1)
+    # vader_bottom10 = pd.read_csv('/Users/billy/code/youtube_optimizer/Insights_page/vader_bottom10.csv')
 
-        with col2:
-            if trick_bar == 'Capitals':
-                with st.expander("See explanation"):
-                    st.write("""
-                    We found that simply having at least one word in all caps resulted in an average threefold increase in views.
-                """)
-                st.image("/Users/billy/code/youtube_optimizer/Insights_page/output-onlinepngtools.png", width=500)
-            elif trick_bar == 'Emojis':
-                with st.expander("See explanation"):
-                    st.write("""
-                        We found that emojis were correlated with higher view count on average, when controlling for outliers.
+
+    # st.markdown(get_css(), unsafe_allow_html=True)
+
+    # 2. horizontal menu
+    selected2 = option_menu(None, ["Click Triggers", "Sentiment Analysis", "Word Cloud", "Faces"],
+        icons=['hand-index', "emoji-smile", "cloud", 'person-circle'],
+        menu_icon="cast", default_index=0, orientation="horizontal",
+        styles={
+            "container": {"padding": "0!important", "background-color": "#fafafa"},
+            "icon": {"color": "orange", "font-size": "20px"},
+            "nav-link": {"font-size": "20px", "text-align": "left", "margin":"0px", "--hover-color": "#eee"},
+            "nav-link-selected": {"background-color": "red"},
+        }
+    )
+
+    if selected2 == "Click Triggers":
+        with st.container():
+            # df = pd.read_csv('/Users/billy/code/youtube_optimizer/Insights_page/Data/final_processed_df.csv')
+            col1, col2= st.columns([1,1])
+            with col1:
+                A = pd.DataFrame([['With','Capitals',0,0],
+                            ['With','Capitals',3794,1],
+                            ['Without','Capitals',0,0],
+                            ['Without','Capitals',633,1],
+                            ['With','Emojis',0,0],
+                            ['With','Emojis',1402,1],
+                            ['Without','Emojis',0,0],
+                            ['Without','Emojis',633,1],
+                            ['With','Numbers',0,0],
+                            ['With','Numbers',1955,1],
+                            ['Without','Numbers',0,0],
+                            ['Without','Numbers',425,1]],columns = ['with','trick','views','play'])
+
+                trick_options = ['Capitals', 'Emojis', 'Numbers']
+                dummy_options = A['play'].unique().tolist()
+
+                trick_bar = st.selectbox("",options=['Capitals', 'Emojis', 'Numbers'])
+
+                B = A[A['trick'].isin([trick_bar])]
+
+                fig1 = px.bar(B, x='with', y='views', color='with', range_y=[0,4000], animation_frame="play",animation_group="with")
+                fig1.update_xaxes(visible=False, showticklabels=False)
+                fig1.update_layout(title=trick_bar, legend_title="")
+                # st.write(px.bar(B, x='with', y='views', color='with', range_y=[0,4000]))
+
+                # trick_bar = st.selectbox(
+                #         ' ', options=['Capitals', 'Emojis', 'Numbers'])
+
+                st.write(fig1)
+
+            with col2:
+                st.write("")
+                st.write("")
+                if trick_bar == 'Capitals':
+                    with st.expander("See explanation"):
+                        st.write("""
+                        We found that simply having at least one word in all caps resulted in an average threefold increase in views.
                     """)
-                    st.image("/Users/billy/code/youtube_optimizer/Insights_page/nerd-emoji-png-11536089702k3eqwusrcg.png", output_format='PNG', width=500)
-            elif trick_bar == 'Numbers':
-                with st.expander("See explanation"):
-                    st.write("""
-                            We found having at least one number in a title significantly improves average view score. We understood this correltion to be in part explainable by the prevelance of high view count 'listicles'.
-                    """)
-                    st.image("/Users/billy/code/youtube_optimizer/Insights_page/blog-post-listicle-example-1.webp", output_format='PNG', width=500)
-
-    elif selected2 == "Emotions":
-        st.write('Here be insights')
-
-    elif selected2 == "Word Cloud":
-        st.write("Word Cloud here")
-
-    elif selected2 == "Faces":
-        st.write("Faces Analysis here")
-
-
-
-
-
+                elif trick_bar == 'Emojis':
+                    with st.expander("See explanation"):
+                        st.write("""
+                            We found that emojis were correlated with higher view count on average, when controlling for outliers.
+                        """)
+                elif trick_bar == 'Numbers':
+                    with st.expander("See explanation"):
+                        st.write("""
+                                We found having at least one number in a title significantly improves average view score. We understood this correltion to be in part explainable by the prevelance of 'listicles' with high view counts.
+                        """)
+    if selected2 == 'Word Cloud':
+        st.image('top.png')
 
 
 
