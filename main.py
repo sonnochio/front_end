@@ -295,23 +295,24 @@ elif tabs == 'Predict':
 
 
 elif tabs == 'Analysis':
-    emotions = {'joy': 0.5,
-                'trust': 0.2,
-                'fear': 0.1,
+    emotions = {'joy': 0.6,
+            'trust': 0.4,
+            'fear': 0.2,
+            'surprise': 0.7,
+            'sadness': 0.4,
+            'disgust': 0.1,
+            'anger': 0.4,
+            'anticipation': 0.35}
+
+    emotions2 = {'joy': 0.5,
+                'trust': 0.4,
+                'fear': 0.3,
                 'surprise': 0.7,
                 'sadness': 0.4,
                 'disgust': 0.1,
-                'anger': 0.2,
-                'anticipation': 0.1}
-
-    emotions2 = {'joy': 0.7,
-                'trust': 0.3,
-                'fear': 0.4,
-                'surprise': 0.7,
-                'sadness': 0.2,
-                'disgust': 0.1,
                 'anger': 0.4,
                 'anticipation': 0.3}
+
 
     def make_pie(df):
 
@@ -447,10 +448,9 @@ elif tabs == 'Analysis':
     elif selected2 == "Sentiment Analysis":
         col1, col2 = st.columns([2,2], gap='small')
         with col1:
-
+            st.subheader("Sentiment distribution of top 10% by viewcount")
             fig = make_vader_pie(vader_top10)
-            fig.update_layout(title='Sentiment distribution of top 10% by viewcount', font=dict(
-            size=16))
+            fig.update_layout(title='')
             fig.update_traces(textposition='inside', textinfo='percent+label')
             fig.update_layout(showlegend=False)
             st.plotly_chart(fig)
@@ -462,15 +462,15 @@ elif tabs == 'Analysis':
             st.write("")
             st.write("")
             st.subheader("Best Performing 10% emotion detection")
-            fig, ax = plt.subplots(1, figsize=(6,6))
+            fig, ax = plt.subplots(1, figsize=(7,7))
             plutchik(emotions, ax, fontweight = 'light',
-                fontsize = 14)
+                fontsize = 10)
             st.pyplot(fig)
 
         with col2:
+            st.subheader("Sentiment distribution of bottom 10% by viewcount")
             fig3 = make_vader_pie(vader_bottom10)
-            fig3.update_layout(title='Sentiment distribution of bottom 10% by viewcount', font=dict(
-            size=16))
+            fig3.update_layout(title='')
             fig3.update_traces(textposition='inside', textinfo='percent+label')
             st.plotly_chart(fig3)
 
@@ -481,9 +481,41 @@ elif tabs == 'Analysis':
             st.write("")
             st.write("")
             st.subheader("Worst performing 10% emotion detection")
-            fig, ax = plt.subplots(1, figsize=(6,6))
+            fig, ax = plt.subplots(1, figsize=(7,7))
             plutchik(emotions2, ax, fontweight = 'light',
-                fontsize = 14)
+                fontsize = 10)
             st.pyplot(fig)
+
+            # st.pyplot(figplutchik(emotions2))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             # st.pyplot(figplutchik(emotions2))
