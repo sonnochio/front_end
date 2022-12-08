@@ -82,7 +82,7 @@ if tabs =='Main':
         st.markdown(lottie_markdown, unsafe_allow_html=True)
 
     with col2:
-        st.image('fron_logo.png')
+        st.image('images/fron_logo.png')
         logo_markdown = f"""
                 <style>
                 .css-1v0mbdj.etr89bj1 {{ border: none;
@@ -140,9 +140,11 @@ elif tabs == 'Predict':
 
     col1,col2, col3 = st.columns(3, gap="small")
     with col1:
+        st.write('   ')
         st.markdown('## Insert your 1st title')
         title1 = st.text_input(' ')
     with col2:
+        st.write('     ')
         st.markdown('## Insert your 2nd title')
         title2 = st.text_input('   ')
     with col3:
@@ -164,7 +166,7 @@ elif tabs == 'Predict':
             def generate_title_gtp3(text='kim kardashian'):
                 response = openai.Completion.create(
                 model="text-davinci-003",
-                prompt=f"write a YouTube title about {text}",
+                prompt=f"write a YouTube title about : {text}",
                 temperature=0.7,
                 max_tokens=256,
                 top_p=1,
@@ -178,7 +180,7 @@ elif tabs == 'Predict':
             get_title = st.form_submit_button('Get Title')
             if get_title:
                 st.session_state["title3"] = generate_title_gtp3(title3)[1:-1]
-            st.write((st.session_state["title3"]))
+            st.write((st.session_state["title3"]).replace('"',''))
 
 
 
@@ -202,7 +204,7 @@ elif tabs == 'Predict':
     """
     st.markdown(html, unsafe_allow_html=True)
 
-    st.image("youtube-1495277_1280.png", width=100)
+    st.image("images/youtube.png", width=100)
     submitted = st.button('',key=3)
 
 
@@ -250,6 +252,7 @@ elif tabs == 'Predict':
             #response = requests.post('http://127.0.0.1:8000/test_predict', json=json.dumps(pred_dict))
 
             result = response.json()
+
             prediction = f"[{result['prediction'][1:-1].replace(']', '],')[:-1]}]"
             index = result['index']
             df = pd.DataFrame({'index':eval(index), 'prediction':eval(prediction)})
@@ -257,10 +260,10 @@ elif tabs == 'Predict':
 
         # st.table(df_A)
         comb_to_display = [0,1,2,-1]
-        medals = ['medal.png',
-                    'medal-2.png',
-                    'medal-3.png',
-                   'poop.png']
+        medals = ['images/medal.png',
+                    'images/medal-2.png',
+                    'images/medal-3.png',
+                   'images/poop.png']
 
         for image in comb_to_display:
             with st.container():
@@ -291,56 +294,15 @@ elif tabs == 'Predict':
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 elif tabs == 'Analysis':
     emotions = {'joy': 0.5,
-            'trust': 0.2,
-            'fear': 0.1,
-            'surprise': 0.7,
-            'sadness': 0.4,
-            'disgust': 0.1,
-            'anger': 0.2,
-            'anticipation': 0.1}
+                'trust': 0.2,
+                'fear': 0.1,
+                'surprise': 0.7,
+                'sadness': 0.4,
+                'disgust': 0.1,
+                'anger': 0.2,
+                'anticipation': 0.1}
 
     emotions2 = {'joy': 0.7,
                 'trust': 0.3,
@@ -350,8 +312,6 @@ elif tabs == 'Analysis':
                 'disgust': 0.1,
                 'anger': 0.4,
                 'anticipation': 0.3}
-
-
 
     def make_pie(df):
 
@@ -378,24 +338,16 @@ elif tabs == 'Analysis':
         return fig
 
 
+    vader_top10 = pd.read_csv('data/vader_top10.csv')
 
-
-    # visualization_df = pd.read_csv('/Users/billy/code/youtube_optimizer/Insights_page/visualization_csv.csv')
-
-    # top10 = pd.read_csv('/Users/billy/code/youtube_optimizer/Insights_page/top10.csv')
-
-    # bottom10 = pd.read_csv('/Users/billy/code/youtube_optimizer/Insights_page/bottom10.csv')
-
-    # vader_top10 = pd.read_csv('/Users/billy/code/youtube_optimizer/Insights_page/vader_top10.csv')
-
-    # vader_bottom10 = pd.read_csv('/Users/billy/code/youtube_optimizer/Insights_page/vader_bottom10.csv')
+    vader_bottom10 = pd.read_csv('data/vader_bottom10.csv')
 
 
     # st.markdown(get_css(), unsafe_allow_html=True)
 
     # 2. horizontal menu
-    selected2 = option_menu(None, ["Click Triggers", "Sentiment Analysis", "Word Cloud", "Faces"],
-        icons=['hand-index', "emoji-smile", "cloud", 'person-circle'],
+    selected2 = option_menu(None, ["Click Triggers", "Word Cloud", "Sentiment Analysis"],
+        icons=['hand-index', "emoji-smile", "cloud"],
         menu_icon="cast", default_index=0, orientation="horizontal",
         styles={
             "container": {"padding": "0!important", "background-color": "#fafafa"},
@@ -407,7 +359,6 @@ elif tabs == 'Analysis':
 
     if selected2 == "Click Triggers":
         with st.container():
-            # df = pd.read_csv('/Users/billy/code/youtube_optimizer/Insights_page/Data/final_processed_df.csv')
             col1, col2= st.columns([1,1])
             with col1:
                 A = pd.DataFrame([['With','Capitals',0,0],
@@ -423,16 +374,28 @@ elif tabs == 'Analysis':
                             ['Without','Numbers',0,0],
                             ['Without','Numbers',425,1]],columns = ['with','trick','views','play'])
 
-                trick_options = ['Capitals', 'Emojis', 'Numbers']
-                dummy_options = A['play'].unique().tolist()
 
-                trick_bar = st.selectbox("",options=['Capitals', 'Emojis', 'Numbers'])
+                base = (((1.77*29)+(0.668*3))/32)
+                C = pd.DataFrame([['1',0,0],
+                                ['1',4.4/base,1],
+                                ['2',0,0],
+                                ['2',4.02/base,1],
+                                ['3+',0,0],
+                                ['3+',base/base,1]],columns = ['Number','Proportional views','play'])
 
-                B = A[A['trick'].isin([trick_bar])]
+                trick_bar = st.selectbox("",options=['Capitals', 'Emojis', 'Numbers', 'Faces'])
 
-                fig1 = px.bar(B, x='with', y='views', color='with', range_y=[0,4000], animation_frame="play",animation_group="with")
-                fig1.update_xaxes(visible=False, showticklabels=False)
-                fig1.update_layout(title=trick_bar, legend_title="")
+                if trick_bar == 'Faces':
+
+                    fig1 = px.bar(C, x='Number', y='Proportional views', color='Number', range_y=[0,4], animation_frame="play",animation_group="Number")
+                    fig1.update_xaxes(visible=False, showticklabels=False)
+                    fig1.update_layout(title=trick_bar, legend_title="")
+
+                else:
+                    B = A[A['trick'].isin([trick_bar])]
+                    fig1 = px.bar(B, x='with', y='views', color='with', range_y=[0,4000], animation_frame="play",animation_group="with")
+                    fig1.update_xaxes(visible=False, showticklabels=False)
+                    fig1.update_layout(title=trick_bar, legend_title="")
                 # st.write(px.bar(B, x='with', y='views', color='with', range_y=[0,4000]))
 
                 # trick_bar = st.selectbox(
@@ -448,96 +411,79 @@ elif tabs == 'Analysis':
                         st.write("""
                         We found that simply having at least one word in all caps resulted in an average threefold increase in views.
                     """)
+                        st.image("images/mouth.png", width=500)
                 elif trick_bar == 'Emojis':
                     with st.expander("See explanation"):
                         st.write("""
                             We found that emojis were correlated with higher view count on average, when controlling for outliers.
                         """)
+                        st.image("images/emoji.jpeg", width=500)
                 elif trick_bar == 'Numbers':
                     with st.expander("See explanation"):
                         st.write("""
                                 We found having at least one number in a title significantly improves average view score. We understood this correltion to be in part explainable by the prevelance of 'listicles' with high view counts.
                         """)
-    if selected2 == 'Word Cloud':
-        st.image('top.png')
+                        st.image("images/blog.webp", output_format='PNG', width=500)
+
+    elif selected2 == "Word Cloud":
+        col1, col2 = st.columns([2,2], gap='medium')
+        with col1:
+            st.title('Best performing 10% of videos')
+            st.image('images/topstop.png')
+            with st.expander("See explanation"):
+                        st.write("""
+                        After removing common stopwords, and hashtags for categories like #shorts, we found that the most common word in the most successful 10% of videos was 'vs'. This indicates that including 'vs' in your title may also act as a click trigger.
+                    """)
 
 
+        with col2:
+            st.title('Worst performing 10% of videos')
+            st.image('images/bottomstop.png')
+            with st.expander("See explanation"):
+                        st.write("""
+                        After removing stopwords and hashtags, we found the most common words in the least well performing 10% of videos to be as above. Youtubers don't like love.. :(
+                    """)
+
+    elif selected2 == "Sentiment Analysis":
+        col1, col2 = st.columns([2,2], gap='small')
+        with col1:
+
+            fig = make_vader_pie(vader_top10)
+            fig.update_layout(title='Sentiment distribution of top 10% by viewcount', font=dict(
+            size=16))
+            fig.update_traces(textposition='inside', textinfo='percent+label')
+            fig.update_layout(showlegend=False)
+            st.plotly_chart(fig)
 
 
+            # fig1=make_pie(top10)
+            # fig1.update_layout(title='Emotion distribution of top 10% of videos by viewcount')
+            # st.plotly_chart(fig1)
+            st.write("")
+            st.write("")
+            st.subheader("Best Performing 10% emotion detection")
+            fig, ax = plt.subplots(1, figsize=(6,6))
+            plutchik(emotions, ax, fontweight = 'light',
+                fontsize = 14)
+            st.pyplot(fig)
+
+        with col2:
+            fig3 = make_vader_pie(vader_bottom10)
+            fig3.update_layout(title='Sentiment distribution of bottom 10% by viewcount', font=dict(
+            size=16))
+            fig3.update_traces(textposition='inside', textinfo='percent+label')
+            st.plotly_chart(fig3)
 
 
+            # fig2=make_pie(bottom10)
+            # fig2.update_layout(title='Emotion distribution of bottom 10% of videos by viewcount')
+            # st.plotly_chart(fig2)
+            st.write("")
+            st.write("")
+            st.subheader("Worst performing 10% emotion detection")
+            fig, ax = plt.subplots(1, figsize=(6,6))
+            plutchik(emotions2, ax, fontweight = 'light',
+                fontsize = 14)
+            st.pyplot(fig)
 
-
-
-
-
-
-
-
-
-
-
-# with st.sidebar:
-#         tabs = on_hover_tabs(tabName=['Dashboard', 'Money', 'Economy'],
-#                              iconName=['dashboard', 'money', 'economy'],
-#                              styles = {'navtab': {'background-color':'#111',
-#                                                   'color': '#818181',
-#                                                   'font-size': '18px',
-#                                                   'transition': '.3s',
-#                                                   'white-space': 'nowrap',
-#                                                   'text-transform': 'uppercase'},
-#                                        'tabOptionsStyle': {':hover :hover': {'color': 'red',
-#                                                                       'cursor': 'pointer'}},
-#                                        'iconStyle':{'position':'fixed',
-#                                                     'left':'7.5px',
-#                                                     'text-align': 'left'},
-#                                        'tabStyle' : {'list-style-type': 'none',
-#                                                      'margin-bottom': '30px',
-#                                                      'padding-left': '30px'}},
-#                              key="1")
-
-
-# if tabs =='Dashboard':
-#     st.title("Navigation Bar")
-#     st.write('Name of option is {}'.format(tabs))
-
-# elif tabs == 'Money':
-#     st.title("Paper")
-#     st.write('Name of option is {}'.format(tabs))
-
-# elif tabs == 'Economy':
-#     st.title("Tom")
-#     st.write('Name of option is {}'.format(tabs))
-
-
-# import utils as utlg
-# from views import home,about,analysis,options,configuration
-
-
-
-# def navigation():
-#     route = utl.get_current_route()
-#     if route == "home":
-#         home.load_view()
-#     elif route == "about":
-#         about.load_view()
-#     elif route == "analysis":
-#         analysis.load_view()
-#     elif route == "options":
-#         options.load_view()
-#     elif route == "configuration":
-#         configuration.load_view()
-#     elif route == None:
-#         home.load_view()
-
-# navigation()
-
-
-# st.set_page_config(layout="wide", page_title='Youtube Optmizer')
-# st.set_option('deprecation.showPyplotGlobalUse', False)
-# utl.inject_custom_css()
-# utl.navbar_component()
-
-# def load_lottiefile(filepath:str):
-#     with open(filepath,"r") as f:
-#         return json.load(f)
+            # st.pyplot(figplutchik(emotions2))
