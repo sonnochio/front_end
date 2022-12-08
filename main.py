@@ -4,7 +4,6 @@ import streamlit as st
 from streamlit_lottie import st_lottie
 import streamlit as st
 from PIL import Image
-import time
 import openai
 from st_on_hover_tabs import on_hover_tabs
 import streamlit as st
@@ -13,12 +12,6 @@ import numpy as np
 import pandas as pd
 from streamlit_option_menu import option_menu
 from css import get_css
-
-
-
-
-
-
 
 
 st.set_page_config(layout="wide")
@@ -52,10 +45,14 @@ if tabs =='Main':
     st.write('Use the model to advise content creators on YouTube which thumbnails and titles they should use to maximise click-through rate.  ')
 
 
-
-
-
 elif tabs == 'Predict':
+
+
+    st.write("# Find the thumbnail and title to get the most views")
+
+    st.write('Use this feature to find the best combination of thumbnails and titles for your next youtube video! Simply upload 3 thumbnails and think of possible titles for your video (our title generator will help you in case you can not think of a third title)')
+
+    st.markdown('---')
 
 
     # Set page tab display
@@ -74,19 +71,18 @@ elif tabs == 'Predict':
     img_file_buffer = st.file_uploader('Upload the differnt thumbnails to choose from', accept_multiple_files=True)
 
 
-
-
     col1,col2, col3 = st.columns(3, gap="small")
     with col1:
         st.markdown('## Insert your 1st title')
-        title1 = st.text_input('   ')
+        title1 = st.text_input('Insert your 1st title')
     with col2:
         st.markdown('## Insert your 2nd title')
-        title2 = st.text_input('         ')
+        title2 = st.text_input('Insert your 2nd title')
     with col3:
         st.markdown("## No idea? Get a title")
         openai.api_key = st.secrets['openai_key']
         #"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"
+        # input3 = "coffee, le wagon, jobs"
         title3=st.text_input("example: coffee, le wagon, jobs")
 
         def generate_title_gtp3(text='kim kardashian'):
@@ -100,93 +96,95 @@ elif tabs == 'Predict':
             presence_penalty=0
             )
             return ((response["choices"])[0]["text"])
-
+        if 'title3' not in st.session_state.keys():
+            st.session_state["title3"] = title3
         get_title = st.button('Get Title')
         if get_title:
-            st.write(generate_title_gtp3(title3))
-            title3 = generate_title_gtp3(title3)[1:-1]
-            if "title3" not in st.session_state.keys():
-                st.session_state["title3"] = title3
-        else:
-            # title3 = "coffee"
-            st.session_state["title3"] = title3
+            st.session_state["title3"] = generate_title_gtp3(title3)[1:-1]
+            # st.write(title3)
+            # st.session_state["title3"] = title3
+            # if "title3" not in st.session_state.keys():
+                # st.session_state["title3"] = title3
+            # else:
+                # title3 = "coffee"
+                # st.session_state["title3"] = title3
+        st.write((st.session_state["title3"]))
 
 
-    html = """
-    <style>
-        /* Disable overlay (fullscreen mode) buttons */
-        .overlayBtn {
-        display: none;
-        }
+    # html = """
+    # <style>
+    #     /* Disable overlay (fullscreen mode) buttons */
+    #     .overlayBtn {
+    #     display: none;
+    #     }
 
-        /* 2nd thumbnail */
-        .element-container:nth-child(4) {
-        top: 266px;
-        left: 500px;
-        }
+    #     /* 2nd thumbnail */
+    #     .element-container:nth-child(4) {
+    #     top: 300px;
+    #     left: 120px;
+    #     }
 
 
-
-        }
-    </style>
-    """
-    st.markdown(html, unsafe_allow_html=True)
+    #     }
+    # </style>
+    # """
+    # st.markdown(html, unsafe_allow_html=True)
 
     # st.image("youtube-1495277_1280.png", width=320)
     submitted = st.button('Submit')
 
     # st.button("button", key=1)
 
-    button_markdown = f"""
-    <style>
-    .row-widget.stButton{{ border: none;
-                                        box-shadow:none;
-                                        width: 150px;
-                                        height: 100px;
-                                        background-size: cover;
+    # button_markdown = f"""
+    # <style>
+    # .row-widget.stButton{{ border: none;
+    #                                     box-shadow:none;
+    #                                     width: 50px;
+    #                                     height: 20px;
+    #                                     background-size: cover;
 
-                                        }}
-    <style>
-    """
-    st.markdown(button_markdown, unsafe_allow_html=True)
+    #                                     }}
+    # <style>
+    # """
+    # st.markdown(button_markdown, unsafe_allow_html=True)
 
     titles = [title1,title2,st.session_state["title3"]]
 
     if submitted:
 
         with st.spinner('Wait for it...'):
-            time.sleep(5)
-            st.success('Done!')
+            # time.sleep(10)
+            # st.success('Wait a bit longer!')
 
-        A = pd.DataFrame(columns = ["index","name","image_id","title"])
+            A = pd.DataFrame(columns = ["index","name","image_id","title"])
 
-        image_id = 0
-        images = []
-        for image_buffer in img_file_buffer:
-            image = Image.open(image_buffer)
-            img_array = np.array(image)
-            img_list = img_array.tolist()
-            images.append(img_list)
-            title_id = 0
-            for title in titles:
-                name = f'{image}{title}'
-                add = pd.DataFrame({"index":[(title_id,image_id)],"name":[name],"image_id":[image_id],"title":[title]})
-                A = pd.concat([A,add],axis=0)
-                title_id += 1
-            image_id +=1
+            image_id = 0
+            images = []
+            for image_buffer in img_file_buffer:
+                image = Image.open(image_buffer)
+                img_array = np.array(image)
+                img_list = img_array.tolist()
+                images.append(img_list)
+                title_id = 0
+                for title in titles:
+                    name = f'{image}{title}'
+                    add = pd.DataFrame({"index":[(title_id,image_id)],"name":[name],"image_id":[image_id],"title":[title]})
+                    A = pd.concat([A,add],axis=0)
+                    title_id += 1
+                image_id +=1
 
-        pred_dict = {'image' : images,'text':titles }
+            pred_dict = {'image' : images,'text':titles }
 
-        response = requests.post('https://youtube1-nct5cxzhzq-ew.a.run.app/test_predict', json=json.dumps(pred_dict))
-        #response = requests.post('http://127.0.0.1:8000/test_predict', json=json.dumps(pred_dict))
+            response = requests.post('https://youtube1-nct5cxzhzq-ew.a.run.app/test_predict', json=json.dumps(pred_dict))
+            #response = requests.post('http://127.0.0.1:8000/test_predict', json=json.dumps(pred_dict))
 
-        result = response.json()
-        prediction = f"[{result['prediction'][1:-1].replace(']', '],')[:-1]}]"
-        index = result['index']
-        df = pd.DataFrame({'index':eval(index), 'prediction':eval(prediction)})
-        df_A = df.merge(right = A, how = 'outer', on = 'index').sort_values("prediction", ascending = False)
+            result = response.json()
+            prediction = f"[{result['prediction'][1:-1].replace(']', '],')[:-1]}]"
+            index = result['index']
+            df = pd.DataFrame({'index':eval(index), 'prediction':eval(prediction)})
+            df_A = df.merge(right = A, how = 'outer', on = 'index').sort_values("prediction", ascending = False)
 
-        st.table(df_A)
+        # st.table(df_A)
         comb_to_display = [0,1,2,-1]
         medals = ['medal.png',
                     'medal-2.png',
