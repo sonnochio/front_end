@@ -11,12 +11,13 @@ import plotly.express as px
 import numpy as np
 import pandas as pd
 from streamlit_option_menu import option_menu
-from css import get_css
 from streamlit_option_menu import option_menu
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 from pyplutchik import plutchik
 import matplotlib.pyplot as plt
+from skimage import io
+
 
 
 st.set_page_config(layout="wide")
@@ -24,8 +25,8 @@ st.markdown('<style>' + open('./style.css').read() + '</style>', unsafe_allow_ht
 
 
 with st.sidebar:
-    tabs = on_hover_tabs(tabName=['Main', 'Predict', 'Analysis'],
-                         iconName=['home', 'sync', 'hub'], default_choice=0)
+    tabs = on_hover_tabs(tabName=['Main', 'Predict', 'Analysis','Future','Team'],
+                         iconName=['home', 'sync', 'hub','rocket_launch','groups'], default_choice=0)
 
 if tabs =='Main':
     def load_lottieurl(url:str):
@@ -71,11 +72,12 @@ if tabs =='Main':
                 <style>
                 .svg {{ border: none;
                                                     box-shadow:none;
+                                                    float:left;
                                                     width: 200px;
                                                     height: 30px;
                                                     border: none;
-                                                    top: 100px;
-                                                    left: -100px;
+                                                    top: 0px;
+                                                    left: 0px;
                                                     }}
                 <style>
                 """
@@ -83,21 +85,30 @@ if tabs =='Main':
 
     with col2:
         st.image('images/fron_logo.png')
-        logo_markdown = f"""
+        logo_markdown = """
                 <style>
-                .css-1v0mbdj.etr89bj1 {{ border: none;
-                                                    box-shadow:none;
-                                                    width: 800px;
-                                                    height: 400px;
-                                                    border: none;
-                                                    top: 100px;
-                                                    left: 0px;
-                                                    }}
+                .css-1v0mbdj.etr89bj1 { border: none;
+                float: left;
+                width: 500px;
+                height: 300px;
+                margin: 100px 10px 390px 15px;
+
+                                                    }
                 <style>
                 """
         st.markdown(logo_markdown, unsafe_allow_html=True)
 
 
+
+
+
+        #   box-shadow:none;
+        # #                                             float:left;
+        #                                             width: 800px;
+        #                                             height: 400px;
+        # #                                             border: none;
+        #                                             top: 100px;
+        #                                             left: 0px;
     # st.write("# Youtube Optimizer")
 
     # st.write('Use the model to advise content creators on YouTube which thumbnails and titles they should use to maximise click-through rate.  ')
@@ -425,6 +436,13 @@ elif tabs == 'Analysis':
                                 We found having at least one number in a title significantly improves average view score. We understood this correltion to be in part explainable by the prevelance of 'listicles' with high view counts.
                         """)
                         st.image("images/blog.webp", output_format='PNG', width=500)
+                elif trick_bar == 'Faces':
+                    with st.expander("See explanation"):
+                        st.write("""
+                                We ran the CV2 Face Detection Model on the dataset, and found having more than two faces was detrimental to view count.
+                        """)
+                        st.image("images/marylin.jpeg", output_format='PNG', width=500)
+
 
     elif selected2 == "Word Cloud":
         col1, col2 = st.columns([2,2], gap='medium')
@@ -486,36 +504,61 @@ elif tabs == 'Analysis':
                 fontsize = 10)
             st.pyplot(fig)
 
-            # st.pyplot(figplutchik(emotions2))
+elif tabs == 'Future':
+    st.markdown("# Not feeling creative? Here's a thumbnail for you !")
+
+    def image_generate_dalle(text):
+        openai.api_key =st.secrets['dalle']
+        response = openai.Image.create(
+        prompt= f'youtube thumbnail about {text}',
+        n=1,
+        size="1024x1024"
+        )
+        image_url = response['data'][0]['url']
+
+        return image_url
+
+    key_words=st.text_input("Use DALL-E to generate a thumbnail:")
+
+    image_url=image_generate_dalle(key_words)
+
+    a=io.imread(image_url)
+    st.image(a)
+
+elif tabs == 'Team':
+    st.title('ABOUT US')
+
+    col1, col2,col3,col4,col5 = st.columns(5)
+
+    with col1:
+        st.header("Jack")
+        img_jack = Image.open('images/Jack.jpeg')
+        st.image(img_jack)
+        st.text('Jacky S')
 
 
+    with col2:
+        st.header("Matt")
+        img_matt = Image.open('images/Matt.png')
+        st.image(img_matt)
+        st.text("Matt C")
 
 
+    with col3:
+        st.header("Nicola")
+        img_nicola = Image.open('images/Nicola.png')
+        st.image(img_nicola)
+        st.text('Nicki F')
+
+    with col4:
+        st.header("Billy")
+        img_billy = Image.open('images/Billy.png')
+        st.image(img_billy)
+        st.text('Billy W')
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            # st.pyplot(figplutchik(emotions2))
+    with col5:
+        st.header('Sonny')
+        img_sonny = Image.open('images/Sonny.jpeg')
+        st.image(img_sonny)
+        st.text('Sonny K')

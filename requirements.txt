@@ -10,3 +10,5 @@ plotly.express
 streamlit-on-Hover-tabs
 pyplutchik
 matplotlib
+skimage
+
