@@ -17,6 +17,8 @@ import plotly.graph_objects as go
 from pyplutchik import plutchik
 import matplotlib.pyplot as plt
 from skimage import io
+from new_image import load_image,resize, convert_to_np
+
 
 
 
@@ -36,27 +38,6 @@ if tabs =='Main':
         return r.json()
 
     url='https://assets9.lottiefiles.com/packages/lf20_qe6rfoqh.json'
-    # html = """
-    # <style>
-    #     /* Disable overlay (fullscreen mode) buttons */
-    #     .overlayBtn {
-    #     display: none;
-    #     }
-
-    #     /* 2nd thumbnail */
-    #     .css-1v0mbdj.etr89bj1 {
-    #     top: 3000px;
-    #     left: 4000px;
-    #     }
-
-
-
-    #     }
-    # </style>
-    # """
-    # st.markdown(html, unsafe_allow_html=True)
-
-
 
 
     col1, col2 = st.columns([0.7,2])
@@ -246,6 +227,7 @@ elif tabs == 'Predict':
             images = []
             for image_buffer in img_file_buffer:
                 image = Image.open(image_buffer)
+                image=resize(image)
                 img_array = np.array(image)
                 img_list = img_array.tolist()
                 images.append(img_list)
