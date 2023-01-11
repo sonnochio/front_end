@@ -61,7 +61,7 @@ if tabs =='Main':
         st.markdown(lottie_markdown, unsafe_allow_html=True)
 
     with col2:
-        st.image('images/fron_logo.png')
+        st.image('images/front_logo_white.png')
         logo_markdown = """
                 <style>
                 .css-1v0mbdj.etr89bj1 { border: none;
