@@ -6,8 +6,5 @@ requests
 pandas
 numpy
 Pillow
-plotly.express
 streamlit-on-Hover-tabs
-pyplutchik
-matplotlib
 scikit-image

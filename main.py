@@ -7,24 +7,33 @@ from PIL import Image
 import openai
 from st_on_hover_tabs import on_hover_tabs
 import streamlit as st
-import plotly.express as px
 import numpy as np
 import pandas as pd
 from new_image import load_image,resize, convert_to_np
 import os
 
 openai.api_key = os.environ.get("OPENAI_API_KEY")
-
-
+# openai.api_key = st.secrets['openai_key']
 
 
 st.set_page_config(layout="wide")
 st.markdown('<style>' + open('./style.css').read() + '</style>', unsafe_allow_html=True)
 
+def generate_title_gtp3(title1,title2):
+            response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt=f"Write a successful YouTube title from these two titles: \n\n '{title1}' and '{title2}' .",
+            temperature=0.7,
+            max_tokens=256,
+            frequency_penalty=0,
+            presence_penalty=0
+            )
+            return ((response["choices"])[0]["text"])
+
 
 with st.sidebar:
-    tabs = on_hover_tabs(tabName=['Main', 'Predict','Team'],
-                         iconName=['home', 'sync','groups'], default_choice=0)
+    tabs = on_hover_tabs(tabName=['Main', 'Optimize','Team'],
+                         iconName=['home', 'bolt','groups'], default_choice=0)
 
 if tabs =='Main':
     def load_lottieurl(url:str):
@@ -36,10 +45,10 @@ if tabs =='Main':
     url='https://assets9.lottiefiles.com/packages/lf20_qe6rfoqh.json'
 
 
-    col1, col2 = st.columns([0.7,2])
+    col0, col1, col2, col3 = st.columns([0.1,1.4,0.1,2.95])
     with col1:
-        utube_logo=load_lottieurl(url)
-        st_lottie(utube_logo,
+        youtube_logo=load_lottieurl(url)
+        st_lottie(youtube_logo,
                 speed=0.3,
                 key='title',
                 height=500,
@@ -54,19 +63,19 @@ if tabs =='Main':
                                                     height: 30px;
                                                     border: none;
                                                     top: 0px;
-                                                    left: 0px;
+                                                    left: 1000px;
                                                     }}
                 <style>
                 """
         st.markdown(lottie_markdown, unsafe_allow_html=True)
 
-    with col2:
-        st.image('images/front_logo_white.png')
+    with col3:
+        st.image('images/front_logo_black.png')
         logo_markdown = """
                 <style>
                 .css-1v0mbdj.etr89bj1 { border: none;
                 float: left;
-                width: 500px;
+                width: 540px;
                 height: 300px;
                 margin: 100px 10px 390px 15px;
 
@@ -75,28 +84,13 @@ if tabs =='Main':
                 """
         st.markdown(logo_markdown, unsafe_allow_html=True)
 
+elif tabs == 'Optimize':
 
 
+    st.write("# Optimize Title and Thumbnail Combination")
 
-
-        #   box-shadow:none;
-        # #                                             float:left;
-        #                                             width: 800px;
-        #                                             height: 400px;
-        # #                                             border: none;
-        #                                             top: 100px;
-        #                                             left: 0px;
-    # st.write("# Youtube Optimizer")
-
-    # st.write('Use the model to advise content creators on YouTube which thumbnails and titles they should use to maximise click-through rate.  ')
-
-
-elif tabs == 'Predict':
-
-
-    st.write("# Find the thumbnail and title to get the most views")
-
-    st.write('Use this feature to find the best combination of thumbnails and titles for your next youtube video! Simply upload 3 thumbnails and think of possible titles for your video (the title generator will help you in case you can not think of a third title).')
+    st.write('''###### Use this feature to find the best combination of thumbnail and title for your next youtube video!''')
+    st.write('''The model will combine 3 images and 3 titles to predict the best combination.''')
 
     # st.write('---')
 
@@ -104,8 +98,8 @@ elif tabs == 'Predict':
 
 
 
-
-    img_file_buffer = st.file_uploader('Upload the differnt thumbnails to choose from:', accept_multiple_files=True)
+    st.markdown('## Upload 3 Images')
+    img_file_buffer = st.file_uploader('Upload exactly 3 different thumbnails to combine:', accept_multiple_files=True)
     # st.write(len(img_file_buffer))
 
     if len(img_file_buffer) == 3:
@@ -122,97 +116,41 @@ elif tabs == 'Predict':
     st.write("     ")
     st.write("     ")
     st.write("     ")
-    st.write("     ")
-    st.write("     ")
-    st.write("     ")
 
-    col1,col2, col3 = st.columns(3, gap="small")
+    col1,col2, col3 = st.columns([1.5,1.5,2])
     with col1:
         st.write('   ')
-        st.markdown('## Insert your 1st title')
+        st.markdown('## Input Title 1')
         title1 = st.text_input(' ')
+        st.write(' ')
+
+        st.write("""The first prediction will take around 1 minute. Following predictions will take around 10 seconds.""")
+
     with col2:
         st.write('     ')
-        st.markdown('## Insert your 2nd title')
+        st.markdown('## Input Title 2')
         title2 = st.text_input('   ')
     with col3:
-        with st.form("my_form"):
-            # st.write("Inside the form")
-            # slider_val = st.slider("Form slider")
-            # checkbox_val = st.checkbox("Form checkbox")
+        st.write('     ')
+        st.write('     ')
+        # st.markdown('## Title Idea 3')
 
-            # # Every form must have a submit button.
-            # submitted = st.form_submit_button("Submit")
-            # if submitted:
-            #     st.write("slider", slider_val, "checkbox", checkbox_val)
+        # get_title = st.button("Button Text", button_style='font-size: 40px;')
+        get_title = st.button(' Use Chat-GPT to generate Title Idea 3')
 
-            st.markdown("## No idea? Get a title")
-            # openai.api_key = st.secrets['openai_key']
-
-            title3=st.text_input("Use GPT-3 to generate a title:")
-
-            def generate_title_gtp3(text='kim kardashian'):
-                response = openai.Completion.create(
-                model="text-davinci-003",
-                prompt=f"write a YouTube title about : {text}",
-                temperature=0.7,
-                max_tokens=256,
-                top_p=1,
-                frequency_penalty=0,
-                presence_penalty=0
-                )
-                return ((response["choices"])[0]["text"])
-
-            if 'title3' not in st.session_state.keys():
-                st.session_state["title3"] = title3
-            get_title = st.form_submit_button('Get Title')
-            if get_title:
-                st.session_state["title3"] = generate_title_gtp3(title3)[1:-1]
-            st.write((st.session_state["title3"]).replace('"',''))
+        if get_title:
+            st.session_state["key"] = generate_title_gtp3(title1,title2)[1:-1]
+        if "key" in st.session_state.keys():
+            title3=st.text_input("", value = st.session_state["key"].replace('"',''))
+        else:
+            title3=st.text_input("", value = '')
 
 
+    submitted = st.button('GENERATE RESULTS',key=3)
 
-    html = """
-    <style>
-        /* Disable overlay (fullscreen mode) buttons */
-        .overlayBtn {
-        display: none;
-        }
-
-        /* 2nd thumbnail */
-        .css-1v0mbdj.etr89bj1 img{
-            float: left;
-            margin: 10px 15px -90px 15px;
-        }
-
-
-
-        }
-    </style>
-    """
-    st.markdown(html, unsafe_allow_html=True)
-
-    st.image("images/youtube.png", width=100)
-    submitted = st.button('',key=3)
-
-
-    button_markdown = f"""
-    <style>
-    .css-1cpxqw2.edgvbvh9:nth-child(1) {{ border: none;
-                                        box-shadow:none;
-                                        width: 120px;
-                                        height: 70px;
-                                        background-color: rgba(0,0,0,0);;
-                                        border: none;
-                                        }}
-    <style>
-    """
-    st.markdown(button_markdown, unsafe_allow_html=True)
-
-    titles = [title1,title2,st.session_state["title3"]]
+    titles = [title1,title2,title3]
 
     if submitted:
-
         with st.spinner('Wait for it...'):
             # time.sleep(10)
             # st.success('Wait a bit longer!')
@@ -238,9 +176,6 @@ elif tabs == 'Predict':
             pred_dict = {'image' : images,'text':titles }
 
             response = requests.post('https://youtube2-nct5cxzhzq-ew.a.run.app/test_predict', json=json.dumps(pred_dict))
-            #response = requests.post('http://127.0.0.1:8000/test_predict', json=json.dumps(pred_dict))
-            st.write(response)
-            st.write(response.json)
             result = response.json()
 
             prediction = f"[{result['prediction'][1:-1].replace(']', '],')[:-1]}]"
@@ -248,34 +183,52 @@ elif tabs == 'Predict':
             df = pd.DataFrame({'index':eval(index), 'prediction':eval(prediction)})
             df_A = df.merge(right = A, how = 'outer', on = 'index').sort_values("prediction", ascending = False)
 
-        # st.table(df_A)
+        st.write('##')
+        st.write('##')
         comb_to_display = [0,1,2,-1]
-        medals = ['images/medal.png',
-                    'images/medal-2.png',
-                    'images/medal-3.png',
+        medals = ['images/medal_gold.png',
+                    'images/medal_silver.png',
+                    'images/medal_bronze.png',
                    'images/poop.png']
 
         for image in comb_to_display:
             with st.container():
-                col1, col2,col3,col4,col5 = st.columns([0.5,4,2,2,0.5])
+                col1, col2,col3,col4,col5,col6, col7 = st.columns([0.5,1.5,0.5,2.5,0.5,1.5,0.5])
                 with col1:
                     st.empty()
-                with col2:
+                with col5:
+                    st.empty()
+                with col4:
+                    # st.m
+                    # st.subheader(df_A.iloc[image]['title'])
+                    st.write('    ')
                     st.image(Image.open(img_file_buffer[df_A.iloc[image]['image_id']]),width = 400)
-                    st.write('    ')
-                    st.write('    ')
-                    st.write('    ')
-                    st.write('    ')
-                    st.write('    ')
-                    st.subheader(df_A.iloc[image]['title'])
-                with col3:
+                    st.markdown(f"<h3 style='text-align: left;'>{df_A.iloc[image]['title']}</h1>", unsafe_allow_html=True)
+
+                    # st.write('    ')
+                with col6:
                     worst_vc = int(df_A.iloc[-1]['prediction'][0])
                     best_vc = int(df_A.iloc[image]['prediction'][0])
                     improvement = f'{round(((best_vc - worst_vc)/worst_vc)*100,2)}%'
+                    # st.write('    ')
+                    st.write('    ')
+                    st.write('    ')
+                    st.write('    ')
+                    st.write('    ')
+                    st.markdown(
+                        """
+                        <style>
+                        [data-testid="stMetricValue"] {
+                            font-size: 50px;
+                        }
+                        </style>
+                        """,unsafe_allow_html=True,)
+
+                    # st.metric(label="Metric", value=1000, delta=100)
                     st.metric('Expected Views', int(df_A.iloc[image]['prediction'][0]), delta=improvement, delta_color="normal", help=None)
-                with col4:
-                    st.image(Image.open(medals[image]),width = 120)
-                with col5:
+                with col2:
+                    st.image(Image.open(medals[image]),width = 240)
+                with col7:
                     st.empty()
                 st.empty()
                 st.markdown("---")

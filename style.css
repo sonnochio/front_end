@@ -1,9 +1,28 @@
+body {
+  background-color: #eee;
+}
+
+.fullScreenFrame > div {
+  display: flex;
+  justify-content: center;
+}
+
+.stButton>button {
+  /* color: #4F8BF9; */
+  margin: auto;
+  width: 50%;
+  font-weight: bold;
+  font-size: 17.5px;
+  height: 2.5em;
+  width: 20.15em;
+}
+
 section[data-testid='stSidebar'] > div:nth-of-type(1) {
     background-color: #111;
 }
 
 button[kind="header"] {
-    background-color: transparent;
+    /* background-color: transparent; */
     color:rgb(180, 167, 141)
 }
 
@@ -21,7 +40,7 @@ button[kind="header"] {
         z-index: 1;
         top: 0;
         left: 0;
-        background-color: #111;
+        background-color: #000;
         overflow-x: hidden;
         transition: 0.5s ease;
         padding-top: 60px;
